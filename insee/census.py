@@ -25,6 +25,22 @@ key = ['IRIS', 'LIBIRIS', 'COM', 'LIBCOM', 'REG', 'DEP', 'UU2010',
        'TRIRIS', 'GRD_QUART', 'TYP_IRIS', 'MODIF_IRIS', 'LAB_IRIS']
 
 
+def fix_LIBGEO_12(x):
+    """
+    LIBGEO change between 2011 & 2012. It prevent merge (LIBGEO is a key)
+    2011 : "Awala-Yalimapo"
+    2012 : "Awala-Yalimapo (commune non irisée)"
+    
+    input: string
+    output : Return string without " (commune non irisée)".
+    """
+    try:
+        return x.encode('utf-8').replace(" (commune non irisée)", '').decode('utf-8')
+    except Exception as er:
+        print("Erreur : " + x + str(er))
+        return x
+
+
 def info_population(year):
     data = None
     for file in list_recensement:
@@ -47,4 +63,8 @@ def info_population(year):
             # Remarque : on a des variables qui s'appellent 'P11_POP1524', 'P11_POP2554', 'P11_POP5564'
             # dans plusieurs tables !!
             assert len(data) == len(df)
-    return data.rename(columns={'IRIS':'CODGEO', 'LIBIRIS': 'LIBGEO'})
+    
+    data.rename(columns={'IRIS':'CODGEO', 'LIBIRIS': 'LIBGEO'}, inplace=True)
+    if year == 2012:
+        data['LIBGEO'] = data['LIBGEO'].apply(fix_LIBGEO_12)
+    return 
