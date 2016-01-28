@@ -84,6 +84,7 @@ def routine1(name, year):
     nb_features = len(df.columns) - len(columns_not_to_sum)
     print("\t il y a ", df.CODGEO.nunique(), " iris différentes pour et ",
           nb_features, " features")
+    df['nb_' + name] = df[[x for x in df.columns if x not in columns_not_to_sum]].sum(axis=1)
     return df
 
 
@@ -106,4 +107,5 @@ def info_equipement(year):
     equipement['nb_enseignement_1'] = equipement[nb_enseignement_1].sum(axis=1)
     equipement['nb_enseignement_2'] = equipement[nb_enseignement_2].sum(axis=1)
     equipement['nb_enseignement_sup'] = equipement[enseignement_sup].sum(axis=1)
+    equipement['nb_service_particulier'] = equipement[enseignement_sup].sum(axis=1)
     return equipement
