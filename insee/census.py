@@ -30,7 +30,7 @@ def fix_LIBGEO_12(x):
     LIBGEO change between 2011 & 2012. It prevent merge (LIBGEO is a key)
     2011 : "Awala-Yalimapo"
     2012 : "Awala-Yalimapo (commune non irisée)"
-    
+
     input: string
     output : Return string without " (commune non irisée)".
     """
@@ -59,12 +59,25 @@ def info_population(year):
             data = df
         else:
             assert len(data) == len(df)
-            data = data.merge(df, on=key, how='outer')
+            data = data.merge(df, on=key, suffixes=('', '_doublon'), how='outer')
             # Remarque : on a des variables qui s'appellent 'P11_POP1524', 'P11_POP2554', 'P11_POP5564'
             # dans plusieurs tables !!
             assert len(data) == len(df)
-    
+            double_cols = [x for x in data.columns if '_doublon' in x]
+            if len(double_cols) > 0:
+                for col in double_cols:
+                    if data[col].dtype == 'object':
+                        if all(data[col] == data[col[:-8]]):
+                            del data[col]
+                        else:
+                            import pdb; pdb.set_trace()
+                    else:
+                        if all((abs(data[col] - data[col[:-8]])/ data[col] < 1e-6) | (data[col] == data[col[:-8]])):
+                            del data[col]
+                        else:
+                            import pdb; pdb.set_trace()
+
+
     data.rename(columns={'IRIS':'CODGEO', 'LIBIRIS': 'LIBGEO'}, inplace=True)
-    if year == 2012:
-        data['LIBGEO'] = data['LIBGEO'].apply(fix_LIBGEO_12)
-    return 
+    data['LIBGEO'] = data['LIBGEO'].str.replace(u' \(commune non irisée\)', '')
+    return data
