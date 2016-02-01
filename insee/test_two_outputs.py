@@ -84,6 +84,8 @@ diff = tab2[float_columns] == tab1[float_columns]
 if not all(diff.sum() == len(diff)):
     pb = diff.sum()[diff.sum() != len(diff)]
     print(pb)
+    for col in pb.index:
+        print(col)
     import pdb; pdb.set_trace()
 
 assert all(diff.sum() == len(diff))
@@ -91,8 +93,5 @@ assert all(diff.sum() == len(diff))
 # valeurs caractère
 diff = tab2[string_columns] == tab1[string_columns]
 assert all(diff.sum() == len(diff))
-# une valeur mal remplie
-# probablement au moment de
-#14465    Sens
 
 

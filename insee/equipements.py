@@ -107,5 +107,4 @@ def info_equipement(year):
     equipement['nb_enseignement_1'] = equipement[nb_enseignement_1].sum(axis=1)
     equipement['nb_enseignement_2'] = equipement[nb_enseignement_2].sum(axis=1)
     equipement['nb_enseignement_sup'] = equipement[enseignement_sup].sum(axis=1)
-    equipement['nb_service_particulier'] = equipement[enseignement_sup].sum(axis=1)
     return equipement

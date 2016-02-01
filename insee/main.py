@@ -21,6 +21,7 @@ revenu = info_revenus(2011)
 revenu['LIBCOM'] = revenu['LIBCOM'].str.replace(' - ', '-')
 # => on prend pour les villes à arrondissement, les valeurs population et equipement
 # juse parce qu'elles sont deux et que revenu est tout seul
+
 del revenu['LIBCOM']; del revenu['COM'];
 # population
 population = info_population(2011)
@@ -40,7 +41,8 @@ data = equipement.merge(revenu, how='outer')
 data = fillna_with_other_table(data, population, 'CODGEO')
 compare_geo(data, population, debug=True)
 data = data.merge(population, how='outer')
-
+## Ce cogeo n'est que dans revenu, on ajoute les valeur COM et LIBCOM que l'on a retiré
+data.loc[data['CODGEO'] == '893870113', ['LIBCOM','COM']] = [['Sens', '89387']]
 
 data.to_csv('data/output11_dev.csv', sep=';', index=False, encoding='utf-8')
 
