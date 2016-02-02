@@ -14,6 +14,15 @@ Created on Wed Jan 27 10:32:21 2016
 #for table in [equipement, population, population12]:
 #    table['LIBGEO'] = table['LIBGEO'].str.replace('CENTRE VILLE', 'Centre Ville')
 
+
+def _compare(list1, list2):
+        set1 = set(list1)
+        set2 = set(list2)
+        removed = set1 - set2
+        added = set2 - set1
+        return removed, added
+
+
 def fillna_with_other_table(tab1, tab2, var, columns=None):
     ''' replace unfilled values of data by values of the other tab if filled '''
     if columns is None:
@@ -31,12 +40,17 @@ def fillna_with_other_table(tab1, tab2, var, columns=None):
 def compare_var(tab1, tab2, var):
     assert max(tab1[var].value_counts()) == 1
     assert max(tab2[var].value_counts()) == 1
-    cond_1_in_2 = tab1[var].isin(tab2.CODGEO)
-    cond_2_in_1 = tab2[var].isin(tab1.CODGEO)
-    in_1_not_in_2 = tab1[var][~cond_1_in_2]
-    in_2_not_in_1 = tab2[var][~cond_2_in_1]
+    in_1_not_in_2, in_2_not_in_1 = _compare(tab1[var], tab2[var])
     print("il y a " + str(len(in_1_not_in_2)) + " " + var + " dans 1 et pas dans 2")
     print("il y a " + str(len(in_2_not_in_1)) + " " + var + " dans 2 et pas dans 1")
+
+    lstrip1 = tab1[var].astype(str).str.lstrip('0')
+    lstrip2 = tab2[var].astype(str).str.lstrip('0')
+    in_1_not_in_2_strip, in_2_not_in_1_strip = _compare(lstrip1, lstrip2)
+    if len(in_1_not_in_2) != len(in_1_not_in_2_strip):
+        import pdb; pdb.set_trace()
+    if len(in_2_not_in_1) != len(in_2_not_in_1_strip):
+        import pdb; pdb.set_trace()
 
 
 def compare_inner(tab1, tab2, var, common_cols=None):
