@@ -72,9 +72,17 @@ def info_population(year):
                         else:
                             import pdb; pdb.set_trace()
                     else:
-                        if all((abs(data[col] - data[col[:-8]])/ data[col] < 1e-6) | (data[col] == data[col[:-8]])):
+                        cond_null = data[col].isnull() & data[col[:-8]].isnull()
+                        cond_egal = data[col] == data[col[:-8]]
+                        cond_hum1 = (data[col].isnull()) & (data[col[:-8]] == 0)
+                        cond_hum2 = (data[col[:-8]].isnull()) & (data[col] == 0)
+                        cond_hum = cond_hum1 | cond_hum2
+                        cond_proche = abs(data[col] - data[col[:-8]])/ data[col] < 1e-6
+                        acceptable = cond_proche | cond_egal | cond_null | cond_hum
+                        if all(acceptable):
                             del data[col]
                         else:
+                            data.loc[~acceptable, [col, col[:-8]]]
                             import pdb; pdb.set_trace()
 
 
