@@ -40,6 +40,7 @@ def fillna_with_other_table(tab1, tab2, var, columns=None):
 def compare_var(tab1, tab2, var):
     assert max(tab1[var].value_counts()) == 1
     assert max(tab2[var].value_counts()) == 1
+    
     in_1_not_in_2, in_2_not_in_1 = _compare(tab1[var], tab2[var])
     print("il y a " + str(len(in_1_not_in_2)) + " " + var + " dans 1 et pas dans 2")
     print("il y a " + str(len(in_2_not_in_1)) + " " + var + " dans 2 et pas dans 1")
@@ -51,6 +52,7 @@ def compare_var(tab1, tab2, var):
         import pdb; pdb.set_trace()
     if len(in_2_not_in_1) != len(in_2_not_in_1_strip):
         import pdb; pdb.set_trace()
+
 
 
 def compare_inner(tab1, tab2, var, common_cols=None):
@@ -66,7 +68,8 @@ def compare_inner(tab1, tab2, var, common_cols=None):
     return tab1_commun, tab2_commun
 
 # une table de comparaison
-def compare_geo(tab1, tab2, var='CODGEO', debug=False):
+
+def compare_geo(tab1, tab2, var='IRIS', debug=False):
     compare_var(tab1, tab2, var)
     tab1_commun, tab2_commun = compare_inner(tab1, tab2, var)
 
@@ -87,15 +90,16 @@ def compare_geo(tab1, tab2, var='CODGEO', debug=False):
             print(u"les différences concernent uniquement les villes à arrondissements" +
                   u" pour LIBCOM et COM")
             return
-
-    col_diff = ['CODGEO']
+    
+    col_diff = ['IRIS']
     for col in commun_col:
         diff = tab1_commun[col] != tab2_commun[col]
         if diff.sum() == 0:
             print(u"aucune différence sur " + col)
         else:
             count = diff.sum()
-            print(u"il y a " + str(count) + u" problèmes pour " + col)
+            print(u"[WARNING] Il y a " + str(count) + u" problèmes pour " + col)
+
             col_diff += [col]
 
     if debug:
